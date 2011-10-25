@@ -54,7 +54,7 @@ subplot(3,1,1), stem(0:Td:31*Td,x1(1:32));
 title('—игнал x1');
 xlabel('t (с)');
 
-subplot(3,1,2), stem(0:2*Td:31*Td,x9(1:16));
+subplot(3,1,2), stem(0:3*Td:31*Td,x9(1:11));
 title('”меньшение fd в 3 раза');
 xlabel('t (с)');
 
@@ -69,7 +69,8 @@ subplot(3,1,1), stem(0:Td:31*Td,x1(1:32));
 title('—игнал x1');
 xlabel('t (с)');
 
-subplot(3,1,2), stem(0:2*Td:31*Td,x11(1:16));
+subplot(3,1,2), stem(0:4*Td:31*Td,x11(1:8));
+axis([0 31*Td -2 2]);
 title('”меньшение fd в 4 раза');
 xlabel('t (с)');
 
@@ -119,7 +120,7 @@ subplot(3,1,1), stem(0:Td:31*Td,x6(1:32));
 title('—игнал x6');
 xlabel('t (с)');
 
-subplot(3,1,2), stem(0:2*Td:31*Td,x15(1:16));
+subplot(3,1,2), stem(0:3*Td:31*Td,x15(1:11));
 title('”меньшение fd в 3 раза');
 xlabel('t (с)');
 
@@ -134,8 +135,9 @@ subplot(3,1,1), stem(0:Td:31*Td,x6(1:32));
 title('—игнал x6');
 xlabel('t (с)');
 
-subplot(3,1,2), stem(0:2*Td:31*Td,x17(1:16));
+subplot(3,1,2), stem(0:4*Td:31*Td,x17(1:8));
 title('”меньшение fd в 4 раза');
+axis([0 31*Td -5 5]);
 xlabel('t (с)');
 
 subplot(3,1,3), stem(0:Td:31*Td,x18(1:32));
