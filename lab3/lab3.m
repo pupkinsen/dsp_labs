@@ -40,7 +40,7 @@ title('Сигнал x1');
 xlabel('t (с)');
 
 subplot(3,1,2), stem(0:2*Td:31*Td,x7(1:16));
-title('Уменьшение fd в 2 раза');
+title('Уменьшение fd в 2 раза ');
 xlabel('t (с)');
 
 subplot(3,1,3), stem(0:Td:31*Td,x8(1:32));
