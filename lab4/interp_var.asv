@@ -1,0 +1,20 @@
+function newsig = interp_var(x,N,fd)
+load('interp_var_table_data.mat');
+v=zeros(1,N);
+L1=zeros(N);
+v=x-x(1);
+y=Q*v';
+J=1;
+L=diag(L);
+squeeze(L);
+for i=1:N
+   if L(i)>0
+        L1(J)=L(i);
+        J=J+1;   
+   end
+   
+end
+L1(J:N)=[];
+J=J-1;
+newsig=L1;
+end
