@@ -1,9 +1,9 @@
 clc
 clear
 %conditions
-N=512;
+N=356;
 n=16;
-f1=20000;
+f1=2000;
 Xm1=1.6;
 
 
@@ -32,4 +32,50 @@ x6=x3+x4;
 %===============X1================
 xx1=rediscr(x1,2);
 xx2=rediscr(x1,3);
-y=interp_var_tables(length(xx1),fd,1);
+interp_var_tables(length(xx1),2,fd)
+z=interp_var(xx1,length(xx1),2);
+figure(1), subplot(3,1,1), plot(0:Td:(length(x1)-1)*Td,x1);
+xlabel('t (C)');
+ylabel('x1');
+subplot(3,1,2), 
+xlabel('t (C)');
+ylabel('x1 rediscr');
+subplot(3,1,3), plot(0:Td:(length(x1)-1)*Td,z);
+xlabel('t (C)');
+ylabel('x1 interp');
+
+%Calculating errors
+eps1=sqrt(sum((z'-x1).^2)/sum(x1.^2));
+
+disp 'Погрешность:';
+disp(eps1);
+figure(2), myfft(x1,1/Td,'Спектр x1');
+figure(3), myfft(z,1/Td,'Спектр интерполирующего сигнала');
+figure(7), plot(t,x1,'--',t,z,0:2*Td:(length(x1)-1)*Td,xx1,'--rs','LineWidth',1,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','g',...
+                'MarkerSize',5)
+%===============X6================
+xx6=rediscr(x6,2);
+
+%interp_var_tables(length(xx1),2,fd)
+z6=interp_var(xx6,length(xx6),2);
+figure(4), subplot(3,1,1), plot(0:Td:(length(x6)-1)*Td,x6);
+xlabel('t (C)');
+ylabel('x6');
+subplot(3,1,2), plot(0:2*Td:(length(x6)-1)*Td,xx6);
+xlabel('t (C)');
+ylabel('x6 rediscr');
+subplot(3,1,3), plot(0:Td:(length(x6)-1)*Td,z6);
+xlabel('t (C)');
+ylabel('x6 interp');
+
+%Calculating errors
+eps2=sqrt(sum((z6'-x6).^2)/sum(x6.^2));
+
+disp 'Погрешность:';
+disp(eps2);
+figure(5), myfft(x6,1/Td,'Спектр x6');
+figure(6), myfft(z6,1/Td,'Спектр интерполирующего сигнала');
+
+

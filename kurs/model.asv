@@ -1,71 +1,52 @@
 clc
 clear
-%conditions
-Ns=400;
-Np=2000;
-No=8000;
-f0=700;
-f1=900;
-f2=1100;
-f4=1300;
-f7=1500;
-f11=1700;
-fd=8000;
-Xm1=1;
+%init
+dp=squeeze(zeros(1,2000));
+do=squeeze(zeros(1,4000));
 
 
-%initialize
-T=1/f1;
-Td=1/fd;
-fi1=0*pi;
-ts=(0:Td:(Td*Ns)-Td);
-tp=(0:Td:(Td*Np)-Td);
-to=(0:Td:(Td*No)-Td);
-%generating signals
+ats_a=Ats();
+ats_b=Ats();
+ats_a.Registr=[2 7 4 2 5 1]; %номер для передачи
+ats_b.Busy=0; %вызываемый абонент будет св
+ats_a.Side=0;
+ats_b.Side=1;
+ats_b.init_transmission();
+ats_a.Status=1;
+ats_a.In_buf=ats_b.Out_buf;
 
-x0=Xm1*sin((2*pi*f0).*ts+fi1);
-x1=Xm1*sin((2*pi*f1).*ts+fi1);
-x2=Xm1*sin((2*pi*f2).*ts+fi1);
-x4=Xm1*sin((2*pi*f4).*ts+fi1);
-x7=Xm1*sin((2*pi*f7).*ts+fi1);
-x11=Xm1*sin((2*pi*f1).*ts+fi1);
+sig=ats_b.Out_buf;
 
-dp=0.*tp;
-ds=0.*ts;
-do=0.*to;
+ats_a.incoming();
+while ats_a.Status~=0
 
-%frequency combinations
-k=zeros(15,Ns);
-k(1,:)=x0+x1; %Цифра 1/Запрос передать 1 цифру
-k(2,:)=x0+x2; %Цифра 2/Запрос передать следующую цифру
-k(3,:)=x1+x2; %Цифра 3/Запрос передать предыдущую цифру
-k(4,:)=x0+x4; %Цифра 4/Вызываемый абонент свободен
-k(5,:)=x1+x4; %Цифра 5/Вызываемый абонент занят
-k(6,:)=x2+x4; %Цифра 6/Запрос предыдущей цифры, принятой с ошибкой
-k(7,:)=x0+x7; %Цифра 7/Абонент недоступен
-k(8,:)=x1+x7; %Цифра 8/Запрос передать весь номер декадным кодом
-k(9,:)=x2+x7; %Цифра 9/Запрос оставшихся цифр декадным кодом
-k(10,:)=x4+x7; %Цифра 0/Запрос цифр начиная с предыдущей декадным кодом
-k(11,:)=x0+x11; %Резерв/Запрос категории междугородного вызова
-k(12,:)=x1+x11; %Подтверждение приема сигналов обр. напр. 4,5,8,9,10/резерв
-k(13,:)=x2+x11; %Запрос повторно передать сигнал/резерв
-k(14,:)=x4+x11; %Автоматич. междугородное соединени/резерв
-k(15,:)=x7+x11; %Полуавтоматич. междугородное соединение/резерв
+    ats_b.In_buf=ats_a.Out_buf();
+    sig=[sig dp ats_a.Out_buf];
+    ats_b.incoming();
+    
+    ats_a.In_buf=ats_b.Out_buf;
+    sig=[sig do ats_b.Out_buf];
+    ats_a.incoming();
+end
+sig=[sig dp ats_a.Out_buf];
+if ats_a.Registr==ats_b.Registr
+    disp('Передача завершена успешно!');
+    if ats_a.Busy==1
+        disp('Вызываемый абонент занят');
+    else
+        disp('Вызываемый абонент свободен');
+    end
+    disp(['атс А, ошибок приема:' num2str(ats_b.Errors)]);
+    disp(['атс Б, ошибок приема:' num2str(ats_a.Errors)]);
+    
+else
+    disp('Ошибка передачи номера');
+end
 
-
-%Передача номера 274251, ответ "абонент свободен"
-sig_p=[ds dp squeeze(k(2,:)) do ds dp squeeze(k(7,:)) do ds dp squeeze(k(4,:)) do ds dp squeeze(k(2,:)) do ds dp squeeze(k(5,:)) do ds dp squeeze(k(1,:)) do ds dp];
-sig_o=[squeeze(k(1,:)) dp ds do squeeze(k(2,:)) dp ds do squeeze(k(2,:)) dp ds do squeeze(k(2,:)) dp ds do squeeze(k(2,:)) dp ds do squeeze(k(2,:)) dp ds do squeeze(k(4,:)) dp];
-sig=sig_o+sig_p+wgn(1,length(sig_p),-50);%сигнал в линии (прямой+обратный+шум)
-
-%awgn(sig,10,'measured');
-figure(1)
-plot(1:length(sig_p),sig_p,'-r',1:length(sig_o),sig_o,'-b');
-title('сигналы прямого и обратного направления');
-h = legend('Прямое направление','Обратное направление',2);
-set(h,'Interpreter','none')
-figure(2)
-plot(1:length(sig),sig);
-
-
-wavwrite(sig,'sound.wav');
+ figure(2)
+ plot(0:(1/8000):(length(sig)/8000)-(1/8000),sig);
+ title('сигналы в линии');
+ xlabel('t (c)');
+ ylabel('A');
+% вывод звукового файла
+ wavwrite(sig,'sound.wav');
