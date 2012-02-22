@@ -1,3 +1,13 @@
+clear
+clc
+[x_ish,Fs,bits]=wavread('Ф.wav'); % загрузка файла
+N=512;% длинна окна анализа (задается самостоятельно)
+n1=512; %нижняя граница отрезка анализа (задается самостоятельно)
+n2=1023; % верхняя граница отрезка анализа
+X1=x_ish(n1:n2); % отрезок сигнала, соответствующий звуку
+n_intervals=16;
+J=2*(N/(2*n_intervals))+4;
+
 %conditions
 N=512;
 n=12;
@@ -48,14 +58,14 @@ for r=2:n_intervals+1
         A_r(r-1,i,i)=temp_interval_length; %all intervals are equal so the constant is used (see 2.8)
     end
 %form Q^r and L^r matrices    
-[Q_r(r-1,:,:),L_r(r-1,:,:)]=eig(squeeze(A_r(r-1,:,:)));
+    [Q_r(r-1,:,:),L_r(r-1,:,:)]=eig(squeeze(A_r(r-1,:,:)));
 %Q_r(r-1,:,:)=sort(squeeze(Q_r(r-1,:,:)),'descend');
 %L_r(r-1,:,:)=sort(squeeze(Q_r(r-1,:,:)),'descend');
 %form AA matrix (formula #2.12)
-for i=0:J-1
-    %AA(J*(r-2)+(i+1),:)=sqrt(sort(diag(squeeze(L_r(r-1,:,:))),'descend'))'*squeeze(Q_r(r-1,:,N-i))';
-    AA(J*(r-2)+(i+1),:)=sqrt(L_r(r-1,N-i,N-i))*squeeze(Q_r(r-1,:,N-i))';
-end
+    for i=0:J-1
+        %AA(J*(r-2)+(i+1),:)=sqrt(sort(diag(squeeze(L_r(r-1,:,:))),'descend'))'*squeeze(Q_r(r-1,:,N-i))';
+        AA(J*(r-2)+(i+1),:)=sqrt(L_r(r-1,N-i,N-i))*squeeze(Q_r(r-1,:,N-i))';
+    end
 
 end
 
