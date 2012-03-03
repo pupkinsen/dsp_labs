@@ -1,7 +1,7 @@
 clc
 clear
 %conditions
-N=128;
+N=1024;
 [X1, Fs, bits]=wavread('фраза.wav');
 X=X1(37100:39300);
 %X=sin(0:.01:pi);
@@ -14,7 +14,7 @@ x=X(n1:n2);
 M=mean(x);
 
 %Коэффициенты корреляции (автокореляционный метод)
-p=25;
+p=N;
 for k=0:p
     s=0;
     for m=1:(N-k)
@@ -30,24 +30,11 @@ clear k RR
 
 %Коэффициенты линейного предсказания (алгоритм Левинсона-Дарбина)
 
-%     E(1)=R(1); ka(1)=R(2)/E(1); al(1,1)=ka(1);
-%     for i=2:p
-%         E(i)=(1-ka(i-1)^2)*E(i-1);
-%         s=0;
-%         for j=1:(i-1)
-%             s=s+al(i-1,j)*R(i-j+1);
-%         end
-%         ka(i)=(R(i+1)-s)/E(i);
-%         al(i,i)=ka(i);
-%         for j=(i-1):-1:1
-%             al(i,j)=al(i-1,j)-ka(i)*al(i-1,i-j);
-%         end
-%     end
- al=zeros(25);
+ al=zeros(N);
 
-     for p=2:26
+     for p=2:N+1
          zz=levinson(R,p-1);
-         al(p-1,1:p-1)=zz(1,2:end);
+         al(p-1,1:p-1)=-zz(1,2:end);
      end
     
     clear E i s j ka
@@ -55,11 +42,11 @@ clear k RR
      
     clear i p
 
-%Дисперсия для p=1:25
-sig0=zeros(25,1);
-for p=1:25
+%Дисперсия для p=1:250
+sig0=zeros(N,1);
+for p=1:N
     for i=1:p
-        alfa(i)=al(i,p);
+        alfa(i)=al(p,i);
     end
     for n=p+1:N        
         sig0(p)=sig0(p)+(x(n)-M-sum(alfa(1:p).*(x(n-(1:p))-M)))^2;
@@ -67,26 +54,57 @@ for p=1:25
     sig0(p)=(1/(N-p))*sig0(p);
 end
 clear p n s k alfa
-plot(1:25,sig0);
+figure(1), plot(1:N,sig0);
+title('Дисперсия');
+xlabel('Порядок модели');
+ylabel('sig0');
 
 %Синтез сигнала
-p=13;
-    for i=1:p
-        alfa(i)=al(i,p);
+sig=zeros(N,1);
+for p=1:N
+    alfa=zeros(1,p);
+        for i=1:p
+            alfa(i)=al(p,i);
+        end
+    s=zeros(size(x));
+    s(1:p)=x(1:p);
+        for k=p+1:length(s)
+            for l=1:p
+                if(k-l>=1)
+                s(k)=s(k)+alfa(l)*s(k-l);
+            end
+        end
     end
-MAX=max(x);
-noys=MAX*randn(N,1);
-xs(1:p)=x(1:p);
-for i=p+1:N
-    s=0;
-    for k=1:p
-        s=s+alfa(k)*(xs(i-k)-M);
-    end
-    xs(i)=s+sig0(p)*noys(i)+M;
-end
-figure(2), plot(1:N,x,1:N,xs)
-
+    sig(p)=sqrt(sum((x-s).^2)/N);
     
+end
+figure(2), plot(1:N,sig)
+title('Среднеквадратическое отклонение');
+xlabel('Порядок модели');
+ylabel('sigma');
+
+
+p=250; %Синтез для порядка 250
+    alfa=zeros(1,p);
+        for i=1:p
+            alfa(i)=al(p,i);
+        end
+    MAX=max(x);
+    noise=MAX*randn(N,1);
+    s=zeros(size(x));
+    s(1:p)=x(1:p);
+        for k=p+1:length(s)
+            for l=1:p
+                if(k-l>=1)
+                s(k)=s(k)+alfa(l)*s(k-l);
+                end
+            end
+            s(k)=s(k)+sig0(p)*noise(k)+M;
+        end
+    sig250=sqrt(sum((x-s).^2)/N)
+    
+figure(3), plot(1:N,x,1:N,s)
+title('Синтез сигнала для p=250');    
     
     
     

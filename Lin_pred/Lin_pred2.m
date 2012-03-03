@@ -5,7 +5,7 @@ close all
 N=128;
 [X1, Fs, bits]=wavread('фраза.wav');
 X=X1(37100:39300);
-X=sin(0:.01:pi);
+%X=sin(0:.01:pi);
 DL=length(X);
 n1=floor(DL/2)-N/2;
 n2=n1-1+N;
