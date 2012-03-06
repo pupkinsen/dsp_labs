@@ -19,26 +19,28 @@ clear k RR
 
 %Коэффициенты линейного предсказания (алгоритм Левинсона-Дарбина)
 
- al=zeros(N);
+% al=zeros(N);
 
-     for p=2:N+1
-         zz=levinson(R,p-1);
-         al(p-1,1:p-1)=-zz(1,2:end);
-     end
+%     for p=2:N+1
+%         zz=levinson(R,p-1);
+%         al(p-1,1:p-1)=-zz(1,2:end);
+%     end
     
-    clear E i s j ka
+%    clear E i s j ka
 
      
-    clear i p
+%    clear i p
 
 
 
 
 p=P; %Синтез для порядка p
     alfa=zeros(1,p);
-        for i=1:p
-            alfa(i)=al(p,i);
-        end
+%        for i=1:p
+%            alfa(i)=al(p,i);
+%        end
+    zz=levinson(R,p);
+    alfa=-zz(1,2:end);
     MAX=max(x);
     s=zeros(nsig,1);
     s(1:p)=x(1:p);
