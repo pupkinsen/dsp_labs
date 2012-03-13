@@ -1,6 +1,6 @@
-clear
+п»їclear
 clc
-step=3; % Шаг прореживания
+step=3; % РЁР°Рі РїСЂРѕСЂРµР¶РёРІР°РЅРёСЏ
 a=imread('F.jpg');
 aa=rgb2gray(a);
 aaa=fft2(aa);
@@ -8,7 +8,7 @@ zz=aaa;
 i=step;
 figure(1)
 imagesc(log(abs(aaa)));
-title('Спектр до прореживания');
+title('РЎРїРµРєС‚СЂ РґРѕ РїСЂРѕСЂРµР¶РёРІР°РЅРёСЏ');
 colormap gray;
 while i<=size(aaa,1)
         aaa(i,:)=[];
@@ -17,11 +17,11 @@ while i<=size(aaa,1)
 end
 figure(2)
 imagesc(log(abs(aaa)));
-title('Спектр после прореживания');
+title('РЎРїРµРєС‚СЂ РїРѕСЃР»Рµ РїСЂРѕСЂРµР¶РёРІР°РЅРёСЏ');
 colormap gray;
 figure(3)
 imagesc(abs(ifft2(aaa)));
-title('Изображение после прореживания');
+title('РР·РѕР±СЂР°Р¶РµРЅРёРµ РїРѕСЃР»Рµ РїСЂРѕСЂРµР¶РёРІР°РЅРёСЏ');
 colormap gray;
 
 [X, Y]=meshgrid(1:size(aaa,1));
@@ -31,12 +31,12 @@ colormap gray;
 aaa_new=interp2(X,Y,aaa,XI,YI);
 figure(4)
 imagesc(log(abs(aaa_new)));
-title('Спектр после интерполяции');
+title('РЎРїРµРєС‚СЂ РїРѕСЃР»Рµ РёРЅС‚РµСЂРїРѕР»СЏС†РёРё');
 colormap gray;
 new_img=abs(ifft2(aaa_new));
 figure(5)
 imagesc(new_img);
-title('Изображение после интерполяции');
+title('РР·РѕР±СЂР°Р¶РµРЅРёРµ РїРѕСЃР»Рµ РёРЅС‚РµСЂРїРѕР»СЏС†РёРё');
 colormap gray;
 
 
