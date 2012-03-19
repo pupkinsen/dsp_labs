@@ -8,10 +8,7 @@ function [ p, q, D ] = dtw( siga, sigb, sr )
     ES2 = sqrt(sum(S2.^2))+1e-12;
     M = (S1'*S2)./(ES1'*ES2);
     M=1-M;
-    imagesc(M);
-    
-    colormap(gray)
-        
+          
     [r,c] = size(M);
 
 
