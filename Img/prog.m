@@ -33,15 +33,15 @@ spect_4(x0:x3,y0:y3)=0;
 
 
 spect_3=zeros(size(spect,1),size(spect,1));
-spect_3((x0:x3,y0:y3)=spect(x0:x3,y0:y3);
+spect_3(x0:x3,y0:y3)=spect(x0:x3,y0:y3);
 spect_3(x0:x2,y0:y2)=0;
 
 spect_2=zeros(size(spect,1),size(spect,1));
-spect_2((x0:x2,y0:y2)=spect(x0:x2,y0:y2);
+spect_2(x0:x2,y0:y2)=spect(x0:x2,y0:y2);
 spect_2(x0:x1,y0:y1)=0;
 
 spect_1=zeros(size(spect,1),size(spect,1));
-spect_1((x0:x1,y0:y1)=spect(x0:x1,y0:y1);
+spect_1(x0:x1,y0:y1)=spect(x0:x1,y0:y1);
 
 
 
@@ -49,12 +49,12 @@ new_img1=abs(ifft2(spect_1)); %картинка, полученная из пе�
 
 figure(1)
 imagesc(a);
-title('Изображение до фильтрации');
+title('�?зображение до фильтрации');
 colormap gray;
 
 figure(2)
-imagesc(new_img);
-title('Изображение после фильтрации');
+imagesc(new_img1);
+title('�?зображение после фильтрации');
 colormap gray;
 
 
