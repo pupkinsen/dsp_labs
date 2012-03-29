@@ -32,5 +32,24 @@ function distance=DTWdistance(siga, sigb, sr )
     end
     
     distance=D(end,end);
+    
+        D = zeros(r+1, c+1);
+    D(1,:) = NaN;
+    D(:,1) = NaN;
+    D(1,1) = 0;
+    D(2:(r+1), 2:(c+1)) = M;
+    D=rot90(D,2);
 
+    phi = zeros(r,c);
+
+    for i = 1:r; 
+      for j = 1:c;
+        [dmax, tb] = min([D(i, j), D(i, j+1), D(i+1, j)]);
+        D(i+1,j+1) = D(i+1,j+1)+dmax;
+        phi(i,j) = tb;
+      end
+    end
+    
+    distance=distance+D(end,end);
+    
 end
